@@ -15,8 +15,13 @@ import Icon from './components/Icon';
 
 import packageJson from '../package.json';
 import { getHost } from './services/hostService';
+import { oneYearSeasonalIncomeData } from './assets/seasonalData';
+import ComboChart from './components/ComboChart';
 
 function App() {
+  const [turnUpRatioData, setTurnUpRatioData] = useState({})
+
+
   const [sixMonthsTurnupRatioData, setSixMonthsTurnupRatioData] = useState({});
   useEffect(() => {
     axios.get(`${getHost()}/api/v1/sixMonthsTurnupRatioData`, {}).then((response) => {
@@ -31,6 +36,7 @@ function App() {
     axios.get(`${getHost()}/api/v1/oneYearTurnupRatioData`, {}).then((response) => {
       const data = response.data;
       setOneYearTurnupRatioData(data);
+      setTurnUpRatioData(data);
     });
   }, []);
 
@@ -205,13 +211,13 @@ function App() {
     const duration = event.target.getAttribute('name');
     switch (duration) {
       case '2y':
-        setOneYearTurnupRatioData(twoYearsTurnupRatioData);
+        setTurnUpRatioData(twoYearsTurnupRatioData);
         break;
       case '1y':
-        setOneYearTurnupRatioData(oneYearTurnupRatioData);
+        setTurnUpRatioData(oneYearTurnupRatioData);
         break;
       case '6m':
-        setOneYearTurnupRatioData(sixMonthsTurnupRatioData);
+        setTurnUpRatioData(sixMonthsTurnupRatioData);
         break;
       // no default
     }
@@ -233,6 +239,15 @@ function App() {
         break;
     }
   };
+
+  const [oneYearSeasonalBookingCheckInData, setOneYearSeasonalBookingCheckInData] = useState({});
+  useEffect(() => {
+    axios.get(`${getHost()}/api/v1/oneYearSeasonalBookingCheckInData`, {}).then((response) => {
+      const data = response.data.data;
+      console.log(data.booking);
+      setOneYearSeasonalBookingCheckInData(data);
+    });
+  }, []);
 
   return (
     <div className='App'>
@@ -258,8 +273,13 @@ function App() {
               </ef-button>
             </ButtonBar>
           </Header>
-          <LineChart data={seasonalIncome} yAxisLabel={'Income ($)'} displayLegend />
-            {/* TODO: Add combo chart */}
+          <LineChart data={oneYearSeasonalIncomeData} yAxisLabel={'Income ($)'} displayLegend />
+          <div className='p-10'>
+        <Header className='mb-4'>
+          Merge (%)
+        </Header>
+          <ComboChart data={oneYearSeasonalBookingCheckInData} />
+      </div>
         </div>
         <div className='grid col-span-2 chart-container'>
           <Header className='mb-4'>
@@ -276,7 +296,7 @@ function App() {
               </ef-button>
             </ButtonBar>
           </Header>
-          <BarChart data={oneYearTurnupRatioData} yAxisLabel={'Turn up ratio (%)'} />
+          <BarChart data={turnUpRatioData} yAxisLabel={'Turn up ratio (%)'} />
         </div>
         <div className='flex flex-col order-first col-span-2 row-span-2 lg:order-none lg:col-span-1 text-center'>
           <div className='flex flex-col grow items-center justify-center accent-bg'>
@@ -344,6 +364,8 @@ function App() {
         <Header>Bookings</Header>
         <BookingsTable bookings={bookings} />
       </div>
+
+
     </div>
   );
 }

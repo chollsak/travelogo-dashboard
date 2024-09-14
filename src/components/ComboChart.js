@@ -8,14 +8,14 @@ function ComboChart({ data, title, yAxis1Label, yAxis2Label, displayLegend = fal
         {
           type: 'line',
           label: '', // TODO: add label for first data
-          data: [], // TODO: pass first data here
+          data: data.booking, // TODO: pass first data here
           yAxisID: 'yAxis1',
           fill: true, // not fill the area under the line
         },
         {
           type: 'bar',
           label: '', // TODO: add label for second data
-          data: [], // TODO: pass second data here
+          data: data.checkin, // TODO: pass second data here
           yAxisID: 'yAxis2',
         },
       ],
